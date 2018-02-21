@@ -8,3 +8,11 @@ jobs:
       - run:
           name: helm-github-pages
           command: cat publish.sh | sh
+      - run:
+          name: Verify
+          command: |
+            alias helm=/tmp/helm/bin/linux-amd64/helm
+            helm repo add helm-github-pages https://int128.github.io/helm-github-pages
+            helm repo update
+            helm repo list
+            helm inspect helm-github-pages/example

@@ -34,11 +34,20 @@ Your repository should have the following directories:
 If the master branch is pushed, syntax checking and publishing are performed.
 Otherwise, only syntax checking is performed.
 
-You should configure a checkout key in order to publish artifacts into the `gh-pages` branch of the repository.
+You should configure a checkout key in order to publish charts into the `gh-pages` branch of the repository.
 
 1. Open settings of your repository on CircleCI.
 1. Open the **Checkout SSH keys** in the Permissions section.
 1. Click the **Create and add user key** button.
+
+Once published, you can add the Helm repository as follows:
+
+```sh
+helm repo add helm-github-pages https://int128.github.io/helm-github-pages
+helm repo update
+```
+
+## Deep dive
 
 ### Environment variables
 
