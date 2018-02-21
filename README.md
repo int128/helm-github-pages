@@ -4,6 +4,24 @@ Let's publish your Helm Charts on GitHub Pages using CircleCI.
 
 ## Getting Started
 
+It takes just 3 steps.
+
+### 1. Create a GitHub repository
+
+Your repository should have the following directories:
+
+- Your Repository
+  - `.circleci/`
+    - `config.yml`
+  - `charts/`
+    - `awesome_chart/`
+      - `Chart.yaml`
+      - ...
+    - `great_chart/`
+      - `Chart.yaml`
+      - ...
+    - ...
+
 Create `.circleci/config.yml` with the following content:
 
 ```yaml
@@ -19,37 +37,38 @@ jobs:
           command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
 ```
 
-Your repository should have the following directories:
+### 2. Setup CircleCI
 
-- Your Repository
-  - `charts/`
-    - `awesome_chart/`
-      - `Chart.yaml`
-      - ...
-    - `great_chart/`
-      - `Chart.yaml`
-      - ...
-    - ...
+Open CircleCI and start building.
 
-If the master branch is pushed, syntax checking and publishing are performed.
-Otherwise, only syntax checking is performed.
-
-You should configure a checkout key in order to publish charts into the `gh-pages` branch of the repository.
+You should configure a checkout key in order to write charts into the `gh-pages` branch of the repository.
 
 1. Open settings of your repository on CircleCI.
 1. Open the **Checkout SSH keys** in the Permissions section.
 1. Click the **Create and add user key** button.
 
-Once published, you can add the Helm repository as follows:
+If the master branch is pushed, syntax checking and publishing are performed.
+Otherwise, only syntax checking is performed.
+
+### 3. Verify the Helm repository
+
+You can add the Helm repository as follows:
 
 ```sh
 helm repo add helm-github-pages https://int128.github.io/helm-github-pages
 helm repo update
+helm repo list
 ```
 
-## Deep dive
+Verify that your chart is available.
 
-### Environment variables
+```sh
+helm inspect helm-github-pages/examples
+```
+
+## More about
+
+### Configurations
 
 You can set the following environment variables:
 
@@ -65,6 +84,8 @@ This script does the following steps:
 1. `helm package` for each chart.
 1. `helm repo index` for all charts.
 1. Push the `gh-pages` branch.
+
+It assumes running on the Alpine image and CircleCI docker environment.
 
 ## Contribution
 
