@@ -16,3 +16,6 @@ jobs:
             helm repo update
             helm repo list
             helm inspect helm-github-pages/example
+    branches:
+      ignore:
+        - gh-pages

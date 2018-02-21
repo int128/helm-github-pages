@@ -2,10 +2,12 @@
 set -e
 set -o pipefail
 
+WORKING_DIRECTORY="$PWD"
+
 [ -z "$HELM_VERSION" ] && HELM_VERSION=2.8.1
 echo "HELM_VERSION=$HELM_VERSION"
 
-[ -z "$HELM_CHARTS_SOURCE" ] && HELM_CHARTS_SOURCE="$PWD/charts"
+[ -z "$HELM_CHARTS_SOURCE" ] && HELM_CHARTS_SOURCE="$WORKING_DIRECTORY/charts"
 echo "HELM_CHARTS_SOURCE=$HELM_CHARTS_SOURCE"
 [ -d "$HELM_CHARTS_SOURCE" ] || {
   echo "ERROR: Could not find Helm charts in $HELM_CHARTS_SOURCE"
@@ -57,6 +59,10 @@ if [ "$CIRCLE_BRANCH" != "master" ]; then
   echo "Current branch is not master and do not publish"
   exit 0
 fi
+
+echo ">> Copying .circleci/config.yml to prevent building gh-pages branch"
+mkdir -p .circleci/
+cp -a "$WORKING_DIRECTORY/.circleci/config.yml" .circleci/config.yml
 
 echo ">> Publishing to $CIRCLE_REPOSITORY_URL"
 git config user.email "$CIRCLE_USERNAME@users.noreply.github.com"
