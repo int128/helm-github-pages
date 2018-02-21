@@ -8,7 +8,7 @@ It takes just 3 steps.
 
 ### 1. Create a GitHub repository
 
-Your repository should have the following directories:
+Create a repository with the following structure:
 
 - Your Repository
   - `.circleci/`
@@ -35,6 +35,17 @@ jobs:
       - run:
           name: helm-github-pages
           command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
+    branches:
+      ignore:
+        - gh-pages
+```
+
+Alternatively, you can store [publish.sh](publish.sh) into `.circleci` directory and call it as follows:
+
+```yaml
+      - run:
+          name: helm-github-pages
+          command: .circleci/publish.sh
 ```
 
 ### 2. Setup CircleCI
@@ -66,7 +77,7 @@ Verify that your chart is available.
 helm inspect helm-github-pages/examples
 ```
 
-## More about
+## Furthermore
 
 ### Configurations
 
