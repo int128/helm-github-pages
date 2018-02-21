@@ -1,6 +1,6 @@
-# helm-github-pages
+# helm-github-pages [![CircleCI](https://circleci.com/gh/int128/helm-github-pages.svg?style=shield)](https://circleci.com/gh/int128/helm-github-pages)
 
-Publish your Helm Charts on GitHub Pages using CircleCI.
+Let's publish your Helm Charts on GitHub Pages using CircleCI.
 
 ## Getting Started
 

@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: alpine
+    steps:
+      - checkout
+      - run:
+          name: helm-github-pages
+          command: cat publish.sh | sh
