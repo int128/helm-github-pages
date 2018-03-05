@@ -4,7 +4,10 @@ set -o pipefail
 
 WORKING_DIRECTORY="$PWD"
 
-[ -z "$GITHUB_PAGES_REPO" ] && GITHUB_PAGES_REPO="$CIRCLE_REPOSITORY_URL"
+[ "$GITHUB_PAGES_REPO" ] || {
+  echo "ERROR: Environment variable GITHUB_PAGES_REPO is required"
+  exit 1
+}
 [ -z "$GITHUB_PAGES_BRANCH" ] && GITHUB_PAGES_BRANCH=gh-pages
 [ -z "$HELM_CHARTS_SOURCE" ] && HELM_CHARTS_SOURCE="$WORKING_DIRECTORY/charts"
 [ -d "$HELM_CHARTS_SOURCE" ] || {
@@ -13,7 +16,7 @@ WORKING_DIRECTORY="$PWD"
 }
 [ -z "$HELM_VERSION" ] && HELM_VERSION=2.8.1
 [ "$CIRCLE_BRANCH" ] || {
-  echo "ERROR: Could not determine the current branch"
+  echo "ERROR: Environment variable CIRCLE_BRANCH is required"
   exit 1
 }
 

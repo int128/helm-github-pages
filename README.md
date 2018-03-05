@@ -4,11 +4,6 @@ Let's publish your Helm Charts on GitHub Pages using CircleCI.
 
 ## Getting Started
 
-### Prerequisite
-
-- You have a GitHub account
-- You have a CircleCI account
-
 ### 1. Create a repository for publishing your charts
 
 Create a new repository on GitHub.
@@ -21,7 +16,7 @@ It assumes that the repository URL is `https://github.com/YOUR_NAME/helm-charts`
 
 ### 2. Create a repository for the chart
 
-Make a Helm chart as follows:
+Create a repository for the Helm chart as follows:
 
 ```sh
 git init
@@ -42,28 +37,30 @@ jobs:
       - checkout
       - run:
           name: helm-github-pages
-          command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
           environment:
             - GITHUB_PAGES_REPO: YOUR_NAME/helm-charts
+          command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
+          ## You can store the script and call it instead
+          #command: .circleci/publish.sh
 ```
 
-Alternatively, you can store [publish.sh](publish.sh) into `.circleci` directory and call it as follows:
+Your repository should look like:
 
-```yaml
-      - run:
-          name: helm-github-pages
-          command: .circleci/publish.sh
 ```
-
-Finally your repository should look like:
-
-- Repository
-  - `.circleci/`
-    - `config.yml`
-  - `charts/`
-    - `example/`
-      - `Chart.yaml`
-      - ...
+/.circleci
+/.circleci/config.yml
+/charts
+/charts/example
+/charts/example/.helmignore
+/charts/example/Chart.yaml
+/charts/example/templates
+/charts/example/templates/NOTES.txt
+/charts/example/templates/_helpers.tpl
+/charts/example/templates/deployment.yaml
+/charts/example/templates/ingress.yaml
+/charts/example/templates/service.yaml
+/charts/example/values.yaml
+```
 
 Then push your changes.
 
@@ -101,18 +98,21 @@ Verify that your chart is available.
 helm inspect YOUR_NAME/examples
 ```
 
-## Furthermore
-
-### Configurations
+## Configuration
 
 You can set the following environment variables:
 
 Name | Value | Default
 -----|-------|--------
-`GITHUB_PAGES_REPO` | URL of the repository for publishing | Same repository: `$CIRCLE_REPOSITORY_URL`
+`GITHUB_PAGES_REPO` | URL of the repository for publishing | Mandatory
 `GITHUB_PAGES_BRANCH` | Branch name for publishing | `gh-pages`
 `HELM_CHARTS_SOURCE` | Helm Charts source directory | `./charts`
 `HELM_VERSION` | Helm version | `2.8.1`
+
+## Contribution
+
+This is an open source software licensed under Apache License 2.0.
+Feel free to open issues or pull requests.
 
 ### How it works
 
@@ -125,9 +125,4 @@ This script does the following steps:
 1. Push the branch.
 
 It assumes running on the Alpine image and CircleCI docker environment.
-
-## Contribution
-
-This is an open source software licensed under Apache License 2.0.
-Feel free to open issues or pull requests.
 
