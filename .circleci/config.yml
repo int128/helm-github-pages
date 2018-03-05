@@ -8,14 +8,16 @@ jobs:
       - run:
           name: helm-github-pages
           command: cat publish.sh | sh
+          environment:
+            # Repository for publishing Helm charts
+            - GITHUB_PAGES_REPO: https://github.com/int128/helm-charts
       - run:
           name: Verify
           command: |
-            alias helm=/tmp/helm/bin/linux-amd64/helm
-            helm repo add helm-github-pages https://int128.github.io/helm-github-pages
-            helm repo update
-            helm repo list
-            helm inspect helm-github-pages/example
-    branches:
-      ignore:
-        - gh-pages
+            if [ "$CIRCLE_BRANCH" = "master" ]; then
+              alias helm=/tmp/helm/bin/linux-amd64/helm
+              helm repo add int128 https://int128.github.io/helm-charts
+              helm repo update
+              helm repo list
+              helm inspect int128/example
+            fi
