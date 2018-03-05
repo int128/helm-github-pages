@@ -44,8 +44,7 @@ jobs:
           name: helm-github-pages
           command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
           environment:
-            # Repository for publishing Helm charts
-            - GITHUB_PAGES_REPO: https://github.com/YOUR_NAME/helm-charts
+            - GITHUB_PAGES_REPO: YOUR_NAME/helm-charts
 ```
 
 Alternatively, you can store [publish.sh](publish.sh) into `.circleci` directory and call it as follows:
