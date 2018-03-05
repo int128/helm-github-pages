@@ -4,23 +4,31 @@ Let's publish your Helm Charts on GitHub Pages using CircleCI.
 
 ## Getting Started
 
-It takes just 3 steps.
+### Prerequisite
 
-### 1. Create a GitHub repository
+- You have a GitHub account
+- You have a CircleCI account
 
-Create a repository with the following structure:
+### 1. Create a repository for publishing your charts
 
-- Your Repository
-  - `.circleci/`
-    - `config.yml`
-  - `charts/`
-    - `awesome_chart/`
-      - `Chart.yaml`
-      - ...
-    - `great_chart/`
-      - `Chart.yaml`
-      - ...
-    - ...
+Create a new repository on GitHub.
+
+Open the repository settings and make sure the repository is published as follows:
+
+![github-pages-settings.png](github-pages-settings.png)
+
+It assumes that the repository URL is `https://github.com/YOUR_NAME/helm-charts` in this tutorial.
+
+### 2. Create a repository for the chart
+
+Make a Helm chart as follows:
+
+```sh
+git init
+mkdir charts
+cd charts
+helm create example
+```
 
 Create `.circleci/config.yml` with the following content:
 
@@ -35,9 +43,9 @@ jobs:
       - run:
           name: helm-github-pages
           command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
-    branches:
-      ignore:
-        - gh-pages
+          environment:
+            # Repository for publishing Helm charts
+            - GITHUB_PAGES_REPO: https://github.com/YOUR_NAME/helm-charts
 ```
 
 Alternatively, you can store [publish.sh](publish.sh) into `.circleci` directory and call it as follows:
@@ -48,7 +56,24 @@ Alternatively, you can store [publish.sh](publish.sh) into `.circleci` directory
           command: .circleci/publish.sh
 ```
 
-### 2. Setup CircleCI
+Finally your repository should look like:
+
+- Repository
+  - `.circleci/`
+    - `config.yml`
+  - `charts/`
+    - `example/`
+      - `Chart.yaml`
+      - ...
+
+Then push your changes.
+
+```sh
+git remote add origin https://github.com/YOUR_NAME/example
+git push origin master
+```
+
+### 3. Setup CircleCI
 
 Open CircleCI and start building.
 
@@ -61,12 +86,12 @@ You should configure a checkout key in order to write charts into the `gh-pages`
 If the master branch is pushed, syntax checking and publishing are performed.
 Otherwise, only syntax checking is performed.
 
-### 3. Verify the Helm repository
+### 4. Verify the publishing
 
 You can add the Helm repository as follows:
 
 ```sh
-helm repo add helm-github-pages https://int128.github.io/helm-github-pages
+helm repo add YOUR_NAME https://YOUR_NAME.github.io/helm-charts
 helm repo update
 helm repo list
 ```
@@ -74,7 +99,7 @@ helm repo list
 Verify that your chart is available.
 
 ```sh
-helm inspect helm-github-pages/examples
+helm inspect YOUR_NAME/examples
 ```
 
 ## Furthermore
@@ -83,18 +108,22 @@ helm inspect helm-github-pages/examples
 
 You can set the following environment variables:
 
-- `HELM_VERSION` = Helm version (defaults to 2.8.1)
-- `HELM_CHARTS_SOURCE` = Helm Charts source directory (defaults to `./charts`)
+Name | Value | Default
+-----|-------|--------
+`GITHUB_PAGES_REPO` | URL of the repository for publishing | Same repository: `$CIRCLE_REPOSITORY_URL`
+`GITHUB_PAGES_BRANCH` | Branch name for publishing | `gh-pages`
+`HELM_CHARTS_SOURCE` | Helm Charts source directory | `./charts`
+`HELM_VERSION` | Helm version | `2.8.1`
 
 ### How it works
 
 This script does the following steps:
 
-1. Check out the `gh-pages` branch.
+1. Check out the `gh-pages` branch of the repository for publishing.
 1. `helm lint` for each chart.
 1. `helm package` for each chart.
 1. `helm repo index` for all charts.
-1. Push the `gh-pages` branch.
+1. Push the branch.
 
 It assumes running on the Alpine image and CircleCI docker environment.
 
