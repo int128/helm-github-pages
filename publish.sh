@@ -34,9 +34,9 @@ cd /tmp/helm/bin
 wget "https://storage.googleapis.com/kubernetes-helm/helm-v${HELM_VERSION}-linux-amd64.tar.gz"
 tar -zxf "helm-v${HELM_VERSION}-linux-amd64.tar.gz"
 chmod +x linux-amd64/helm
-HELM="$PWD/linux-amd64/helm"
-"$HELM" version -c
-"$HELM" init -c
+alias helm=/tmp/helm/bin/linux-amd64/helm
+helm version -c
+helm init -c
 
 echo ">> Checking out $GITHUB_PAGES_BRANCH branch from $GITHUB_PAGES_REPO"
 cd /tmp/helm/publish
@@ -47,14 +47,14 @@ git clone -b "$GITHUB_PAGES_BRANCH" "$GITHUB_PAGES_REPO" .
 echo '>> Building charts...'
 find "$HELM_CHARTS_SOURCE" -mindepth 1 -maxdepth 1 -type d | while read chart; do
   echo ">>> helm lint $chart"
-  "$HELM" lint "$chart"
+  helm lint "$chart"
   chart_name="`basename "$chart"`"
   echo ">>> helm package -d $chart_name $chart"
   mkdir -p "$chart_name"
-  "$HELM" package -d "$chart_name" "$chart"
+  helm package -d "$chart_name" "$chart"
 done
 echo '>>> helm repo index'
-"$HELM" repo index .
+helm repo index .
 
 if [ "$CIRCLE_BRANCH" != "master" ]; then
   echo "Current branch is not master and do not publish"
