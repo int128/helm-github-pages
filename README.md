@@ -7,12 +7,11 @@ Let's publish your Helm Charts on GitHub Pages using CircleCI.
 ### 1. Create a repository for publishing your charts
 
 Create a new repository on GitHub.
-
-Open the repository settings and make sure the repository is published as follows:
-
-![github-pages-settings.png](github-pages-settings.png)
-
 It assumes that the repository URL is `https://github.com/YOUR_NAME/helm-charts` in this tutorial.
+
+Make sure the `gh-pages` branch of the repository is published as follows:
+
+<img src="github-pages-settings.png" width="761">
 
 ### 2. Create a repository for the chart
 
@@ -62,7 +61,7 @@ Your repository should look like:
 /charts/example/values.yaml
 ```
 
-Then push your changes.
+Then push your changes to GitHub.
 
 ```sh
 git remote add origin https://github.com/YOUR_NAME/example
@@ -71,18 +70,17 @@ git push origin master
 
 ### 3. Setup CircleCI
 
-Open CircleCI and start building.
-
-You should configure a checkout key in order to write charts into the `gh-pages` branch of the repository.
+Open CircleCI and add the chart repository.
+Then you must configure a checkout key to publish the charts.
 
 1. Open settings of your repository on CircleCI.
-1. Open the **Checkout SSH keys** in the Permissions section.
-1. Click the **Create and add user key** button.
+1. Open the *Checkout SSH keys* in the Permissions section.
+1. Click the *Create and add user key* button.
+
+### 4. Verify the publishing
 
 If the master branch is pushed, syntax checking and publishing are performed.
 Otherwise, only syntax checking is performed.
-
-### 4. Verify the publishing
 
 You can add the Helm repository as follows:
 
