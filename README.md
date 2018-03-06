@@ -55,7 +55,7 @@ Now your repository looks like:
 /charts/example/values.yaml
 ```
 
-### 3. Build the repository with CircleCI
+### 3. Build the chart on CircleCI
 
 Create `.circleci/config.yml` in the repository.
 
@@ -94,20 +94,25 @@ You must configure a checkout key as follows:
 
 Make sure that the build is successfully finished.
 
-### 4. Verify the publishing
+### 4. Install the chart
 
 Add the Helm Charts repository.
 
 ```sh
 helm repo add YOUR_NAME https://YOUR_NAME.github.io/helm-charts
-helm repo list
 helm repo update
 ```
 
 Make sure that your chart is available.
 
 ```sh
-helm inspect YOUR_NAME/examples
+helm inspect YOUR_NAME/example
+```
+
+At last you can install the chart.
+
+```sh
+helm install YOUR_NAME/example
 ```
 
 ## Configuration
@@ -120,6 +125,8 @@ Name | Value | Default
 `GITHUB_PAGES_BRANCH` | Branch name for publishing | `gh-pages`
 `HELM_CHARTS_SOURCE` | Helm Charts source directory | `./charts`
 `HELM_VERSION` | Helm version | `2.8.1`
+
+See also [`.circleci/config.yml`](.circleci/config.yml) in this repository.
 
 ## Contribution
 
