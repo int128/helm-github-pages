@@ -1,30 +1,63 @@
-# helm-github-pages [![CircleCI](https://circleci.com/gh/int128/helm-github-pages.svg?style=shield)](https://circleci.com/gh/int128/helm-github-pages)
+# Helm GitHub Pages [![CircleCI](https://circleci.com/gh/int128/helm-github-pages.svg?style=shield)](https://circleci.com/gh/int128/helm-github-pages)
 
-Let's publish your Helm Charts on GitHub Pages using CircleCI.
+Let's publish your [Kubernetes Helm](https://github.com/kubernetes/helm) Charts on GitHub Pages using CircleCI.
 
 ## Getting Started
 
 ### 1. Create a repository for publishing your charts
 
-Create a new repository on GitHub.
-It assumes that the repository URL is `https://github.com/YOUR_NAME/helm-charts` in this tutorial.
+Create a new repository with `README.md` on GitHub. Then create `gh-pages` branch as follows:
 
-Make sure the `gh-pages` branch of the repository is published as follows:
+```sh
+git clone https://github.com/YOUR_NAME/helm-charts
+cd helm-charts
+git checkout -b gh-pages
+git push origin gh-pages
+```
+
+Make sure that `gh-pages` branch of the repository is published on GitHub Pages.
 
 <img src="github-pages-settings.png" width="761">
 
-### 2. Create a repository for the chart
+### 2. Create a chart
 
-Create a repository for the Helm chart as follows:
+Create a new repository with `README.md` on GitHub. Then create a chart as follows:
 
 ```sh
-git init
+git clone https://github.com/YOUR_NAME/hello-world
+cd hello-world
+
+# Create a chart
 mkdir charts
 cd charts
 helm create example
+
+# Push the change
+git add charts
+git commit -m 'Add charts'
+git push origin master
 ```
 
-Create `.circleci/config.yml` with the following content:
+Now your repository looks like:
+
+```
+/README.md
+/charts
+/charts/example
+/charts/example/.helmignore
+/charts/example/Chart.yaml
+/charts/example/templates
+/charts/example/templates/NOTES.txt
+/charts/example/templates/_helpers.tpl
+/charts/example/templates/deployment.yaml
+/charts/example/templates/ingress.yaml
+/charts/example/templates/service.yaml
+/charts/example/values.yaml
+```
+
+### 3. Build the repository with CircleCI
+
+Create `.circleci/config.yml` in the repository.
 
 ```yaml
 version: 2
@@ -39,58 +72,39 @@ jobs:
           environment:
             - GITHUB_PAGES_REPO: YOUR_NAME/helm-charts
           command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
-          ## You can store the script and call it instead
+          ## Instead, you can store the script and call it
           #command: .circleci/publish.sh
 ```
 
-Your repository should look like:
-
-```
-/.circleci
-/.circleci/config.yml
-/charts
-/charts/example
-/charts/example/.helmignore
-/charts/example/Chart.yaml
-/charts/example/templates
-/charts/example/templates/NOTES.txt
-/charts/example/templates/_helpers.tpl
-/charts/example/templates/deployment.yaml
-/charts/example/templates/ingress.yaml
-/charts/example/templates/service.yaml
-/charts/example/values.yaml
-```
-
-Then push your changes to GitHub.
+Push the change.
 
 ```sh
-git remote add origin https://github.com/YOUR_NAME/example
+git add .circleci/
+git commit -m 'Add .circleci'
 git push origin master
 ```
 
-### 3. Setup CircleCI
+Then open [CircleCI](https://circleci.com) and add the repository.
 
-Open CircleCI and add the chart repository.
-Then you must configure a checkout key to publish the charts.
+You must configure a checkout key as follows:
 
 1. Open settings of your repository on CircleCI.
 1. Open the *Checkout SSH keys* in the Permissions section.
 1. Click the *Create and add user key* button.
 
+Make sure that the build is successfully finished.
+
 ### 4. Verify the publishing
 
-If the master branch is pushed, syntax checking and publishing are performed.
-Otherwise, only syntax checking is performed.
-
-You can add the Helm repository as follows:
+Add the Helm Charts repository.
 
 ```sh
 helm repo add YOUR_NAME https://YOUR_NAME.github.io/helm-charts
-helm repo update
 helm repo list
+helm repo update
 ```
 
-Verify that your chart is available.
+Make sure that your chart is available.
 
 ```sh
 helm inspect YOUR_NAME/examples
@@ -114,13 +128,12 @@ Feel free to open issues or pull requests.
 
 ### How it works
 
-This script does the following steps:
+The script assumes that it is running on the Alpine image and CircleCI docker environment.
+
+It does the following steps:
 
 1. Check out the `gh-pages` branch of the repository for publishing.
 1. `helm lint` for each chart.
 1. `helm package` for each chart.
 1. `helm repo index` for all charts.
-1. Push the branch.
-
-It assumes running on the Alpine image and CircleCI docker environment.
-
+1. If the master branch is pushed, publish the charts.
