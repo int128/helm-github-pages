@@ -2,6 +2,29 @@
 
 Let's publish your [Kubernetes Helm](https://github.com/kubernetes/helm) Charts on GitHub Pages using CircleCI.
 
+For example, I publish my charts on [int128/helm-charts](https://github.com/int128/helm-charts) by the following workflow:
+
+```
+> git commit
+> git push origin master
+  ↓ Push
++--------------------------------------------+
+| GitHub (int128/kubernetes-dashboard-proxy) |
++--------------------------------------------+
+  ↓ Webhook
++----------+
+| CircleCI |
++----------+
+  ↓ Push
++-----------------------------+
+| GitHub (int128/helm-charts) |
++-----------------------------+
+  ↓ Publish
++--------------------------------------+
+| https://int128.github.io/helm-charts |
++--------------------------------------+
+```
+
 ## Getting Started
 
 ### 1. Create a repository for publishing your charts
