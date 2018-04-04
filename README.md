@@ -1,28 +1,38 @@
 # Helm GitHub Pages [![CircleCI](https://circleci.com/gh/int128/helm-github-pages.svg?style=shield)](https://circleci.com/gh/int128/helm-github-pages)
 
-Let's publish your [Kubernetes Helm](https://github.com/kubernetes/helm) Charts on GitHub Pages using CircleCI.
+You can publish your [Kubernetes Helm](https://github.com/kubernetes/helm) charts on GitHub Pages.
 
-For example, I publish my charts on [int128/helm-charts](https://github.com/int128/helm-charts) by the following workflow:
+## Example
+
+Here is my workflow to publish the chart:
 
 ```
 > git commit
 > git push origin master
   ↓ Push
-+--------------------------------------------+
-| GitHub (int128/kubernetes-dashboard-proxy) |
-+--------------------------------------------+
++--------------+
+| GitHub       | https://github.com/int128/kubernetes-dashboard-proxy
++--------------+
   ↓ Webhook
-+----------+
-| CircleCI |
-+----------+
++--------------+
+| CircleCI     |
++--------------+
   ↓ Push
-+-----------------------------+
-| GitHub (int128/helm-charts) |
-+-----------------------------+
++--------------+
+| GitHub       | https://github.com/int128/helm-charts
++--------------+
   ↓ Publish
-+--------------------------------------+
-| https://int128.github.io/helm-charts |
-+--------------------------------------+
++--------------+
+| GitHub Pages | https://int128.github.io/helm-charts
++--------------+
+```
+
+You can install the chart by the following:
+
+```sh
+helm repo add int128 https://int128.github.io/helm-charts
+helm repo update
+helm install int128/kubernetes-dashboard-proxy
 ```
 
 ## Getting Started
@@ -32,7 +42,7 @@ For example, I publish my charts on [int128/helm-charts](https://github.com/int1
 Create a new repository with `README.md` on GitHub. Then create `gh-pages` branch as follows:
 
 ```sh
-git clone https://github.com/YOUR_NAME/helm-charts
+git clone https://github.com/USERNAME/helm-charts
 cd helm-charts
 git checkout -b gh-pages
 git push origin gh-pages
@@ -47,7 +57,7 @@ Make sure that `gh-pages` branch of the repository is published on GitHub Pages.
 Create a new repository with `README.md` on GitHub. Then create a chart as follows:
 
 ```sh
-git clone https://github.com/YOUR_NAME/hello-world
+git clone https://github.com/USERNAME/hello-world
 cd hello-world
 
 # Create a chart
@@ -78,7 +88,12 @@ Now your repository looks like:
 /charts/example/values.yaml
 ```
 
-### 3. Build the chart on CircleCI
+### 3. Fork this repository
+
+Fork this repository.
+You can access to the script by `https://raw.githubusercontent.com/USERNAME/helm-github-pages/master/publish.sh`.
+
+### 4. Setup CircleCI
 
 Create `.circleci/config.yml` in the repository.
 
@@ -93,10 +108,8 @@ jobs:
       - run:
           name: helm-github-pages
           environment:
-            - GITHUB_PAGES_REPO: YOUR_NAME/helm-charts
-          command: wget -O - https://raw.githubusercontent.com/int128/helm-github-pages/master/publish.sh | sh
-          ## Instead, you can store the script and call it
-          #command: .circleci/publish.sh
+            - GITHUB_PAGES_REPO: USERNAME/helm-charts
+          command: wget -O - https://raw.githubusercontent.com/USERNAME/helm-github-pages/master/publish.sh | sh
 ```
 
 Push the change.
@@ -117,25 +130,23 @@ You must configure a checkout key as follows:
 
 Make sure that the build is successfully finished.
 
-### 4. Install the chart
+### 5. Test the chart
 
 Add the Helm Charts repository.
 
 ```sh
-helm repo add YOUR_NAME https://YOUR_NAME.github.io/helm-charts
+helm repo add USERNAME https://USERNAME.github.io/helm-charts
 helm repo update
 ```
 
 Make sure that your chart is available.
 
 ```sh
-helm inspect YOUR_NAME/example
-```
+# Show values for the chart
+helm inspect USERNAME/example
 
-At last you can install the chart.
-
-```sh
-helm install YOUR_NAME/example
+# Install the chart
+helm install USERNAME/example
 ```
 
 ## Configuration
